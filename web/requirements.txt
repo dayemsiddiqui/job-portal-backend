@@ -5,3 +5,4 @@ pymongo >= 2.1
 flask-cors
 redis
 python-dotenv
+sentry-sdk[flask]==0.7.14

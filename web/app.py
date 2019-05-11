@@ -2,6 +2,13 @@ from flask import Flask
 from flask_cors import CORS
 from flask import request, jsonify
 from .jobs import fetch_latest_jobs, get_total_jobs_count, search_jobs, get_job_details
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+sentry_sdk.init(
+    dsn="https://5f0531268d3c4920a7b6ba11fa69d43f@sentry.io/1452832",
+    integrations=[FlaskIntegration()]
+)
 
 app = Flask(__name__)
 
