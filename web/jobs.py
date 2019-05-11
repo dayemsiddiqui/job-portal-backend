@@ -3,13 +3,9 @@ from bson import json_util
 import json
 import pymongo
 from flask import jsonify
-from werkzeug.contrib.cache import RedisCache
+from .bootstrap import db, cache
 
 from bson.objectid import ObjectId
-
-cache = RedisCache(host='localhost')
-client = MongoClient('localhost', 27017)
-db = client.remotejobs
 
 
 def fetch_latest_jobs(page=1, per_page=10):
