@@ -1,45 +1,30 @@
-from pymongo import MongoClient
-from bson import json_util
-import json
-import pymongo
-from flask import jsonify
-from .bootstrap import db, cache
+from flask import request
+from flask_restplus import Resource
+from .app import api
+from .services.jobs import fetch_latest_jobs, get_total_jobs_count, search_jobs, get_job_details
 
-from bson.objectid import ObjectId
+@api.route('/jobs')
+class Job(Resource):
+    def get(self):
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+        return fetch_latest_jobs(page, per_page)
 
+@api.route('/jobs/<string:job_id>')
+class JobDetails(Resource):
+    def get(self, job_id):
+        return get_job_details(job_id)
 
-def fetch_latest_jobs(page=1, per_page=10):
-    jobs = db.jobs.find().sort('date', pymongo.DESCENDING).skip(
-        (page - 1) * per_page).limit(per_page)
-    jobs = list(jobs)
-    jobs = json.dumps({'result': jobs}, indent=4, default=json_util.default)
-
-    return jsonify(json.loads(jobs))
-
-
-def get_total_jobs_count():
-    rv = cache.get('total-jobs-count')
-    if rv is None:
-        count = db.jobs.find().count()
-        response = json.dumps({'result': count})
-        cache.set('total-jobs-count', response, timeout=60 * 60 * 24)
-        return jsonify(json.loads(response))
-
-    return jsonify(json.loads(rv))
-
-
-def search_jobs(search, page=1, per_page=10):
-    jobs = db.jobs.find({"$text": {"$search": search}}).sort(
-        'date', pymongo.DESCENDING).skip((page - 1) * per_page).limit(per_page)
-    jobs = list(jobs)
-    jobs = json.dumps({'result': jobs}, indent=4, default=json_util.default)
-
-    return jsonify(json.loads(jobs))
-
-
-def get_job_details(jobId):
-    jobs = db.jobs.find({'_id': ObjectId(jobId)})
-    jobs = list(jobs)
-    jobs = json.dumps({'result': jobs}, indent=4, default=json_util.default)
-
-    return jsonify(json.loads(jobs))
+@api.route('/jobs/count')
+class JobCount(Resource):
+    def get(self):
+        return get_total_jobs_count()
+    
+@api.route('/jobs/search')
+class JobSearch(Resource):
+    def get(self):
+        search = request.args.get('query')
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+        return search_jobs(search, page, per_page)
+    

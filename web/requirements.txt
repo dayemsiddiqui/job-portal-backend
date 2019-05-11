@@ -6,3 +6,4 @@ flask-cors
 redis
 python-dotenv
 sentry-sdk[flask]==0.7.14
+flask-restplus
