@@ -32,7 +32,8 @@ def search():
 
 @app.route('/ping')
 def test():
-    return jsonify('pong')
+    return jsonify({status: 'success', payload:'pong'})
+
 
 
 @app.route('/jobs/<job_id>')
