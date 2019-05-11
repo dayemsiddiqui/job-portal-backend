@@ -32,7 +32,7 @@ def search():
 
 @app.route('/ping')
 def test():
-    return jsonify({status: 'success', payload:'pong'})
+    return jsonify({'status': 'success', 'payload':'pong'})
 
 
 
