@@ -21,7 +21,7 @@ def get_total_jobs_count():
         count = db.jobs.find().count()
         response = json.dumps({'result': count})
         cache.set('total-jobs-count', response, timeout=60 * 60 * 24)
-        return jsonify(json.loads(response))
+        return json.loads(response)
 
     return json.loads(rv)
 
